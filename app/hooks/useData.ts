@@ -32,27 +32,48 @@ const useData = (url: string,maxProducts: number) => {
       const data = await jsonData.json();
       return data;
     } catch (error) {
+      throw new Error;
+    }
+  }
 
+  const editProduct = async (id: number, body: any) => {
+    try {
+      const jsonData = await fetch(`${url}/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      });
+      const data = await jsonData.json();
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw new Error;
+    }
+  }
+
+  const addProduct = async (body: any) => {
+    try {
+      console.log({body});
+      const jsonData = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      });
+      const data = await jsonData.json();
+      console.log({data})
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw new Error;
     }
   }
 
 
-  // useEffect(() => {
-  //   fetch(url)
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       setData(data.slice(0, maxProducts));
-  //       setLoading(false);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  //   console.log('--------------------')
-  //   console.log('Fetching data')
-  //   console.log('--------------------')
-  // }, [url]);
-
-  return { fetchProducts, fetchProduct };
+  return { fetchProducts, fetchProduct, addProduct, deleteProduct };
 }
 
 export default useData;
