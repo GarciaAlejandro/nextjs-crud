@@ -29,10 +29,13 @@ const ProductCard = ({ product, onEditProduct, onDeleteProduct }: { product: Pro
 
   return (
     <div className="card container-fluid" style={{ height: '100%' }}>
-      <img className="w-full" src={product.img} alt="Amazing pizza photo" />
+      <div className="row justify-content-center">
+        <img className="custom-img col-8" src={product.img} alt="Amazing pizza photo" />
+      </div>
       <div className="card-body px-6 py-4">
-        <div className="font-bold text-xl mb-2 text-black">{product.name || 'No name'} </div>
-        <div className="font-bold text-xl mb-2 text-black">{product.description || 'No description'} </div>
+        <div className="font-bold text-xl mb-2 text-black text-center">{product.name || 'No name'} </div>
+        <div className="font-bold text-xl mb-2 text-secondary text-center">{product.description || 'No description'} </div>
+        <div className="font-bold text-xl mb-2 text-secondary text-center">{`$${product.price}` || 'No price'} </div>
 
       </div>
       <div className="row justify-content-center items-align-center px-2">
