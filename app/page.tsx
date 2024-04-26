@@ -74,11 +74,11 @@ export default function Home() {
         <a href="/product" className="btn btn-primary col-lg-2 col-sm-12 col-xs-12 col-md-12 my-2">Add Product</a>
       </div>
       </div>
-      <div className="row justify-content-center align-items-center p-5"  style={{height: '65vh'}}>
+      <div className="row justify-content-center align-items-center p-5"  style={{height: 'auto'}}>
         {
           data && data.length
             ? data.map((item: any, index: any) => (
-                <div className="col-xs-12 col-sm-12 col-md-6 col-lg-2 p-3 full-height" key={index} >
+                <div className="col-xs-12 col-sm-12 col-md-3 col-lg-4 col-xl-3 p-6 py-2 full-height" key={index} >
                   <ProductCard
                     product={item}
                     onEditProduct={editProduct}

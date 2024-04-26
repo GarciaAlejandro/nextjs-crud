@@ -7,16 +7,9 @@ import { useState } from 'react';
 import InputCustom from '../components/InputCustom';
 import { useRouter } from 'next/navigation';
 
-interface Product {
-  id: number;
-  name: string;
-  veg: Boolean;
-  price: number;
-  description: string;
-  img?: string;
-
+interface ID{
+  id?: number;
 }
-
 const ProductPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams()
@@ -30,7 +23,7 @@ const ProductPage = () => {
     description: '',
   })
 
-  const { fetchProduct, addProduct } = useData('https://food-website-25pc.onrender.com/dessert', 10)
+  const { fetchProduct, addProduct, editProduct } = useData('https://food-website-25pc.onrender.com/dessert', 10)
 
   useEffect(() => {
     if (!id) return 
@@ -50,7 +43,22 @@ const ProductPage = () => {
     setForm({ ...form, [key]: value })
   }
 
-  const handleSubmit = async () => {
+  const handleSubmit = async () => id ? onEditProduct(id) : onAddProduct()
+  const onEditProduct = async (id: any) => {
+    const rawForm = JSON.parse(JSON.stringify(form))
+    const productToEdit = {
+      name: rawForm.name,
+      price: rawForm.price,
+      description: rawForm.description,
+      img: 'https://api.pizzahut.io/v1/content/en-in/in-1/images/dessert/cornetto-double-chocolate.acc21849ac732f2f85998ad73e532d40.1.jpg?width=522',
+      quantity: 1,
+      
+    }
+    const ID = (data as ID).id || undefined
+    await editProduct(ID || id,productToEdit)
+    onBack()
+  }
+  const onAddProduct = async () => {
     const rawForm = JSON.parse(JSON.stringify(form))
     const newProduct = {
       ...rawForm,
