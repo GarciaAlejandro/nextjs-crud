@@ -16,7 +16,7 @@ export default function Home() {
   const [idToDelete, setIdToDelete] = useState<number | undefined>(undefined);
   const [search, setSearch] = useState('');
 
-  const {fetchProducts} = useData('https://food-website-25pc.onrender.com/dessert', 10)
+  const {fetchProducts, deleteProduct} = useData('https://food-website-25pc.onrender.com/dessert', 10)
 
     
   const router = useRouter();
@@ -33,18 +33,26 @@ export default function Home() {
     }) 
   }, [])
 
-  const deleteProduct = async (id : number) => {
+  const onDeleteProduct = async (id : number) => {
     
     setIdToDelete(undefined);
     
     if(!id) return;
-    
-    const filteredData = data?.filter((item: any) => item.id !== idToDelete) ?? [];
+    try {
+      await deleteProduct(id)
+      const filteredData = data?.filter((item: any) => item.id !== idToDelete) ?? [];
 
-    if(filteredData.length){
-      setData(filteredData);
+      if(filteredData.length){
+        setData(filteredData);
+      }
+      
+    } catch (error){
+      console.error(error)
+    } finally{
+      setIsOpen(false);
     }
-    setIsOpen(false);
+    
+
   }
   const editProduct = async (id : number) => {
     console.log(`Editing product with id: ${id}`)
@@ -84,14 +92,14 @@ export default function Home() {
 
         }
       </div>
-      <div className="text-black">
+      <div className="text-black container-fluid">
         {
           isOpen &&
             <Modal onClose={onToggleModal}>
               <div className="row justify-content-center">
                 <h6 className="text-center">Are you sure you want to delete this product?</h6>
                 <div className="row justify-content-center">
-                  <a className="btn btn-danger m-2 col-2" onClick={() => deleteProduct(idToDelete!)}>Yes</a>
+                  <a className="btn btn-danger m-2 col-2" onClick={() => onDeleteProduct(idToDelete!)}>Yes</a>
                   <a className="btn btn-primary m-2 col-2" onClick={onToggleModal}>No</a>
                 </div>
               </div>
