@@ -5,6 +5,15 @@ import { useSearchParams } from 'next/navigation'
 import useData from '../hooks/useData';
 import { useState } from 'react';
 import InputCustom from '../components/InputCustom';
+interface Product {
+  id: number;
+  name: string;
+  veg: Boolean;
+  price: number;
+  description: string;
+  img?: string;
+
+}
 
 const ProductPage = () => {
   const searchParams = useSearchParams()
@@ -46,12 +55,6 @@ const ProductPage = () => {
       }</h1>
       <div className="row justify-content-center items-align-center">
         <section className="card g-2 g-lg-3 text-white form-card">
-          {
-            data.img &&
-              <div className="col-12 row justify-content-center">
-                <img src={data.img} className="custom-img col-4"/>
-              </div>
-          }
           <h5 className="col-12 text-black px-3">
             Enter the details of the product
           </h5>
@@ -68,7 +71,7 @@ const ProductPage = () => {
               <InputCustom 
                 label="Price" 
                 type="number"
-                value={form.price}
+                value={form.price.toString()}
                 placeholder="Name"
                 onChange={(value) => handleChange('price', value)}
                 className="inputCustom"

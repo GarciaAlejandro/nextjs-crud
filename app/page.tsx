@@ -11,9 +11,9 @@ import Modal from "./components/Modal";
 export default function Home() {
 
   const [isOpen, setIsOpen] = useState(false);
-  const [data, setData] = useState(undefined);
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [idToDelete, setIdToDelete] = useState(undefined);
+  const [idToDelete, setIdToDelete] = useState<number | undefined>(undefined);
   const [search, setSearch] = useState('');
 
   const {fetchProducts} = useData('https://food-website-25pc.onrender.com/dessert', 10)
@@ -53,7 +53,7 @@ export default function Home() {
   const onToggleModal = () => {
     setIsOpen(!isOpen)
   }
-  const onShowDeleteModal = (id: number) => {
+  const onShowDeleteModal = (id: number | undefined) => {
     setIdToDelete(id)
     onToggleModal()
   }
@@ -91,7 +91,7 @@ export default function Home() {
               <div className="row justify-content-center">
                 <h6 className="text-center">Are you sure you want to delete this product?</h6>
                 <div className="row justify-content-center">
-                  <a className="btn btn-danger m-2 col-2" onClick={deleteProduct}>Yes</a>
+                  <a className="btn btn-danger m-2 col-2" onClick={() => deleteProduct(idToDelete!)}>Yes</a>
                   <a className="btn btn-primary m-2 col-2" onClick={onToggleModal}>No</a>
                 </div>
               </div>

@@ -12,7 +12,7 @@ interface Product {
   veg: Boolean;
   price: number;
   description: string;
-  img: string;
+  img?: string;
 
 }
 const ProductCard = ({ product, onEditProduct, onDeleteProduct }: { product: Product, onEditProduct: (id: number) => void, onDeleteProduct: (id: number) => void }) => {
