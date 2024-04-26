@@ -37,6 +37,8 @@ const useData = (url: string,maxProducts: number) => {
   }
 
   const editProduct = async (id: number, body: any) => {
+    console.log({id, body})
+    if(!id) throw new Error('id is required');
     try {
       const jsonData = await fetch(`${url}/${id}`, {
         method: 'PUT',
@@ -46,6 +48,7 @@ const useData = (url: string,maxProducts: number) => {
         body: JSON.stringify(body)
       });
       const data = await jsonData.json();
+      console.log({data});
       return data;
     } catch (error) {
       console.error(error);
@@ -73,7 +76,7 @@ const useData = (url: string,maxProducts: number) => {
   }
 
 
-  return { fetchProducts, fetchProduct, addProduct, deleteProduct };
+  return { fetchProducts, fetchProduct, addProduct, deleteProduct, editProduct };
 }
 
 export default useData;
