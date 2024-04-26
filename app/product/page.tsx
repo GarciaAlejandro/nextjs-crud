@@ -5,6 +5,8 @@ import { useSearchParams } from 'next/navigation'
 import useData from '../hooks/useData';
 import { useState } from 'react';
 import InputCustom from '../components/InputCustom';
+import { useRouter } from 'next/navigation';
+
 interface Product {
   id: number;
   name: string;
@@ -16,6 +18,7 @@ interface Product {
 }
 
 const ProductPage = () => {
+  const router = useRouter();
   const searchParams = useSearchParams()
   const id = searchParams.get('id')
 
@@ -27,7 +30,7 @@ const ProductPage = () => {
     description: '',
   })
 
-  const { fetchProduct } = useData('https://food-website-25pc.onrender.com/dessert', 10)
+  const { fetchProduct, addProduct } = useData('https://food-website-25pc.onrender.com/dessert', 10)
 
   useEffect(() => {
     if (!id) return 
@@ -47,6 +50,20 @@ const ProductPage = () => {
     setForm({ ...form, [key]: value })
   }
 
+  const handleSubmit = async () => {
+    const rawForm = JSON.parse(JSON.stringify(form))
+    const newProduct = {
+      ...rawForm,
+      quantity: 1,
+      img: 'https://api.pizzahut.io/v1/content/en-in/in-1/images/dessert/cornetto-double-chocolate.acc21849ac732f2f85998ad73e532d40.1.jpg?width=522'
+    }
+    await addProduct(newProduct)
+    onBack()
+  }
+  const onBack = () => {
+    router.push('/')
+  }
+
 
   return (
     <div className="container">
@@ -59,35 +76,38 @@ const ProductPage = () => {
             Enter the details of the product
           </h5>
           <div className="col-12">
-            <form>
-              <InputCustom 
-                label="Name" 
-                type="text"
-                value={form.name}
-                placeholder="Name"
-                onChange={(value) => handleChange('name', value)}
-                className="custom-input"
-              />
-              <InputCustom 
-                label="Price" 
-                type="number"
-                value={form.price.toString()}
-                placeholder="Name"
-                onChange={(value) => handleChange('price', value)}
-                className="inputCustom"
-              />
-              <InputCustom 
-                label="Description" 
-                type="text"
-                value={form.description}
-                placeholder="Name"
-                onChange={(value) => handleChange('description', value)}
-                className="inputCustom"
-              />
-              <button type="submit" className="btn btn-primary mx-2 my-2">{`${
-                id ? 'Edit' : 'Add'
-              } Product`}</button>
-            </form>
+            <InputCustom 
+              label="Name" 
+              type="text"
+              value={form.name}
+              placeholder="Name"
+              onChange={(value) => handleChange('name', value)}
+              className="custom-input"
+            />
+            <InputCustom 
+              label="Price" 
+              type="number"
+              value={form.price.toString()}
+              placeholder="Name"
+              onChange={(value) => handleChange('price', value)}
+              className="inputCustom"
+            />
+            <InputCustom 
+              label="Description" 
+              type="text"
+              value={form.description}
+              placeholder="Description about the product"
+              onChange={(value) => handleChange('description', value)}
+              className="inputCustom"
+            />
+            <div className="row justify-content-center">
+                <a onClick={handleSubmit} className="btn btn-primary col-6 mx-2 my-2">{`${
+                  id ? 'Edit' : 'Add'
+                } Product`}</a>
+                <div className="btn btn-primary col-6 mx-2 my-2" onClick={onBack}>
+                  Back to Product List
+                </div>
+            </div>
           </div>
         </section>
       </div>
