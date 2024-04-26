@@ -11,7 +11,7 @@ import Modal from "./components/Modal";
 export default function Home() {
 
   const [isOpen, setIsOpen] = useState(false);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [idToDelete, setIdToDelete] = useState<number | undefined>(undefined);
   const [search, setSearch] = useState('');
