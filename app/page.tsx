@@ -1,112 +1,102 @@
+'use client'
+import "bootstrap/dist/css/bootstrap.min.css"; // Import bootstrap CSS
 import Image from "next/image";
+import ProductCard from "./productCard";
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from "react";
+import useData from './hooks/useData';
+import InputCustom from "./components/InputCustom";
+import Modal from "./components/Modal";
 
 export default function Home() {
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [data, setData] = useState(undefined);
+  const [loading, setLoading] = useState(false);
+  const [idToDelete, setIdToDelete] = useState(undefined);
+  const [search, setSearch] = useState('');
+
+  const {fetchProducts} = useData('https://food-website-25pc.onrender.com/dessert', 10)
+
+    
+  const router = useRouter();
+  const handleNavigate = (id: number) => {
+    router.push(`/product?id=${id}`);
+  }
+
+  useEffect(() => {
+    setLoading(true);
+    fetchProducts().then((result) => {
+      console.log({result})
+      setData(result)
+      setLoading(false);
+    }) 
+  }, [])
+
+  const deleteProduct = async (id : number) => {
+    
+    setIdToDelete(undefined);
+    
+    if(!id) return;
+    
+    const filteredData = data?.filter((item: any) => item.id !== idToDelete) ?? [];
+
+    if(filteredData.length){
+      setData(filteredData);
+    }
+    setIsOpen(false);
+  }
+  const editProduct = async (id : number) => {
+    console.log(`Editing product with id: ${id}`)
+    handleNavigate(id)
+  }
+  const onToggleModal = () => {
+    setIsOpen(!isOpen)
+  }
+  const onShowDeleteModal = (id: number) => {
+    setIdToDelete(id)
+    onToggleModal()
+  }
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
+    <main className="container-fluid full-height-container">
+      <h3 className="text-center m-5"> Product List </h3>
+      <div className="row justify-content-center align-items-center px-5"  style={{height: 'auto'}}>
+      <div className="row justify-content-center align-items-center px-5"  style={{height: 'auto'}}>
+        <a href="/product" className="btn btn-primary col-lg-2 col-sm-12 col-xs-12 col-md-12 my-2">Add Product</a>
       </div>
-
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
       </div>
+      <div className="row justify-content-center align-items-center p-5"  style={{height: '65vh'}}>
+        {
+          data && data.length
+            ? data.map((item: any, index: any) => (
+                <div className="col-xs-12 col-sm-12 col-md-6 col-lg-2 p-3 full-height" key={index} >
+                  <ProductCard
+                    product={item}
+                    onEditProduct={editProduct}
+                    onDeleteProduct={onShowDeleteModal}
+                  />
+                </div>
+              ))
+            : !loading ?  
+                <p className="text-center p-8"> No products found </p>
+                : <p className="text-center p-8"> Loading... </p>
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+        }
+      </div>
+      <div className="text-black">
+        {
+          isOpen &&
+            <Modal onClose={onToggleModal}>
+              <div className="row justify-content-center">
+                <h6 className="text-center">Are you sure you want to delete this product?</h6>
+                <div className="row justify-content-center">
+                  <a className="btn btn-danger m-2 col-2" onClick={deleteProduct}>Yes</a>
+                  <a className="btn btn-primary m-2 col-2" onClick={onToggleModal}>No</a>
+                </div>
+              </div>
+            </Modal>
+        }
       </div>
     </main>
   );
